@@ -52,15 +52,14 @@ class StudentsListViewActivity : AppCompatActivity() {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             val inflation = LayoutInflater.from(parent?.context)
-            var view = convertView
-            if(view == null){
-                view = inflation.inflate(R.layout.student_list_row, parent, false)
-                Log.d("TAG", "Inflating position $position")
-                val checkBox: CheckBox? = view?.findViewById(R.id.student_row_check_box)
-
-                checkBox?.apply {
-                    setOnClickListener{ view ->
-                        (tag as? Int)?.let{ tag ->
+            val view = convertView ?: inflation.inflate(
+                R.layout.student_list_row,
+                parent,
+                false
+            ).apply {
+                findViewById<CheckBox>(R.id.student_row_check_box).apply {
+                    setOnClickListener { view ->
+                        (tag as? Int)?.let { tag ->
                             val student = students?.get(tag)
                             student?.isChecked = (view as? CheckBox)?.isChecked ?: false
                         }
@@ -70,10 +69,15 @@ class StudentsListViewActivity : AppCompatActivity() {
             val student = students?.get(position)
             val nameTextView: TextView? = view?.findViewById(R.id.student_row_name_text_view)
             val idTextView: TextView? = view?.findViewById(R.id.student_row_id_text_view)
-            //val checkBox: CheckBox? = view?.findViewById(R.id.student_row_check_box)
+            val checkBox: CheckBox? = view?.findViewById(R.id.student_row_check_box)
 
             nameTextView?.text = student?.name
             idTextView?.text = student?.id
+
+            checkBox?.apply {
+                isChecked = student?.isChecked ?: false
+                tag = position
+            }
 
             return view!!
         }
